@@ -38,3 +38,9 @@ def convert_types(body, class_type):
                 result_line.append(line[i])
         result.append(result_line)
     return result
+
+def compare_duration(duration):
+    hours = duration[duration.find('T')+1:duration.find('H')]
+    minutes = duration[duration.find('H')+1:duration.find('M')]
+    
+    return hours * 60 + minutes

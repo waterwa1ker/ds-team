@@ -1,11 +1,10 @@
 from sys import argv
-from collections import Counter
 import requests as re
 from bs4 import BeautifulSoup as bs
 import json
 
 from file_parser import FileParser
-from utils import get_class_name, get_column_index, print_file, convert_types
+from utils import get_class_name, get_column_index, print_file, convert_types, compare_duration
 
 
 class Data:
@@ -56,19 +55,17 @@ class Links(Data):
         
     def get_imdb(self, list_of_movies, list_of_fields):
         """
-The method returns a list of lists [movieId, field1, field2, field3, ...] for the list of movies given as the argument (movieId).
-        For example, [movieId, Director, Budget, Cumulative Worldwide Gross, Runtime].
-        The values should be parsed from the IMDB webpages of the movies.
-     Sort it by movieId descendingly.
+            Метод возвращает основную информацию о фильме по идентификатору. Например, режиссера, длительность фильма и т.п.
         """
         
         RIGHT_MOVIE_ID_LENGTH = 7
+        
+        movies_info = []
         
         for movie in list_of_movies:
 
             # приводим movie_id к правильному значению. Иногда слева нужно добавлять ноль
             movie_id = f"{'0' * (RIGHT_MOVIE_ID_LENGTH - len(str(movie)))}{movie}"
-            print(movie_id)
         
             link = f'https://www.imdb.com/title/tt{movie_id}/?ref_=vp_close'
             headers = {
@@ -79,65 +76,74 @@ The method returns a list of lists [movieId, field1, field2, field3, ...] for th
             soup = bs(page.text, "html.parser")
             script_tag = soup.find('script', {'type': 'application/ld+json'})
             
-            movies_info = []
-            
             if script_tag:
                 json_data = json.loads(script_tag.string)
                 
-                movie_info = f"'{movie_id}', "
+                movie_info = [movie_id]
                 
                 for field in list_of_fields:
-                    movie_info = f"{movie_info}, '{json_data.get(field)[0]}'"
+                    movie_info.append(json_data.get(field))
                 
                 movies_info.append(movie_info)
             
-        print(movies_info)
-        return movies_info
+        sorted_movies_info = sorted(movies_info, key=lambda x: x[0], reverse=True)
+        return sorted_movies_info
         
     def top_directors(self, n):
         """
-        The method returns a dict with top-n directors where the keys are directors and 
-        the values are numbers of movies created by them. Sort it by numbers descendingly.
+            Метод возвращает словарь, ключами которого являются имена режиссеров, а значения - количество фильмов, выпущенных ими.
         """
-        
-        RIGHT_MOVIE_ID_LENGTH = 7
         
         director_dict = {}
         
-        for element in self.data:
+        directors = self.get_imdb(self.__get_imdb_id(), ['director'])
+        for director in directors:
+            director_name = director[1][0]['name']
+            if director_name in director_dict:
+                director_dict[director_name] += 1
+            else:
+                director_dict[director_name] = 1
+        return sorted(director_dict.items(), key=lambda x: x[1], reverse=True)[:n]
             
-            # приводим movie_id к правильному значению. Иногда слева нужно добавлять ноль
-            movie_id = f"{'0' * (RIGHT_MOVIE_ID_LENGTH - len(str(element[1])))}{element[1]}"
-            link = f'https://www.imdb.com/title/tt{movie_id}/?ref_=vp_close'
-            headers = {
-                'User-Agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
-            }
-            
-            page = re.get(link, headers = headers)
-            soup = bs(page.text, "html.parser")
-            script_tag = soup.find('script', {'type': 'application/ld+json'})
-            
-            if script_tag:
-                json_data = json.loads(script_tag.string)
-                # может быть так, что у режиссеров одинаковые имя и фамилия, так что целесообразнее сделать через url
-                director_url = json_data.get('director')[0]['name']
-                if director_url not in director_dict:
-                    director_dict[director_url] = 1
-                else:
-                    director_dict[director_url] += 1
-                    
-        sorted_director_dict = sorted(director_dict.items(), key=lambda x : x[1], reverse=True)    
-        print(sorted_director_dict[:n])
-        
-        return sorted_director_dict
+
         
     def most_expensive(self, n):
         """
         The method returns a dict with top-n movies where the keys are movie titles and
         the values are their budgets. Sort it by budgets descendingly.
         """
-        return budgets
         
+        RIGHT_MOVIE_ID_LENGTH = 7
+        budget_dict = {}
+        
+        for movie in self.data:
+        
+            movie = movie[1]
+            
+            movie_id = f"{'0' * (RIGHT_MOVIE_ID_LENGTH - len(str(movie)))}{movie}"
+            
+            link = f'https://www.imdb.com/title/tt{movie_id}/?ref_=vp_close'
+            headers = {
+                'User-Agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
+            }
+            
+            page = re.get(link, headers = headers)
+            soup = bs(page.text, "html.parser")
+            
+            box_office_section = soup.find('section', {'data-testid': 'BoxOffice'})
+            if box_office_section != None:
+                budget_info = box_office_section.text
+
+                start_index = budget_info.find('Budget') + len('Budget') + 1 
+                end_index = budget_info[start_index:].find(' ') + start_index    
+                
+                budget = budget_info[start_index:end_index]
+                budget = budget.replace(',', '')
+                
+                if movie_id not in budget_dict:
+                    budget_dict[movie_id] = budget
+                
+        return sorted(budget_dict.items(), key=lambda x: int(x[1]), reverse=True)[:n]  
     def most_profitable(self, n):
         """
         The method returns a dict with top-n movies where the keys are movie titles and
@@ -148,11 +154,20 @@ The method returns a list of lists [movieId, field1, field2, field3, ...] for th
         
     def longest(self, n):
         """
-        The method returns a dict with top-n movies where the keys are movie titles and
-        the values are their runtime. If there are more than one version – choose any.
-     Sort it by runtime descendingly.
+            Метод возвращает словарь, ключами которого явлются названия фильмов, а значениями - их длительность
         """
-        return runtimes
+        
+        movies_dict = {}
+        
+        movies = self.get_imdb(self.__get_imdb_id(), ['duration', 'name'])
+        movies = list(filter(lambda x: x[1] != None, movies))
+        
+        for movie in movies:
+            movie_name = movie[2]
+            if movie_name not in movies_dict:
+                movies_dict[movie_name] = movie[1]
+        sorted_movies = sorted(movies_dict.items(), key=lambda x: compare_duration(x[1]), reverse = True)
+        return sorted_movies[:n]
         
     def top_cost_per_minute(self, n):
         """
@@ -161,6 +176,9 @@ the values are the budgets divided by their runtime. The budgets can be in diffe
      The values should be rounded to 2 decimals. Sort it by the division descendingly.
         """
         return costs
+    
+    def __get_imdb_id(self):
+        return list(map(lambda x: x[1], self.data))
 
 
 
@@ -189,5 +207,7 @@ class Movies(Data):
 
 if __name__ == '__main__':
     if len(argv) == 5:
-        #Links(argv[1]).top_directors(3)
-        Links(argv[1]).get_imdb(['0114709', '0113497'], ['description', 'genre'])
+        #print(Links(argv[1]).top_directors(2))
+        #print(Links(argv[1]).longest(2))
+        print(Links(argv[1]).most_expensive(4))
+        #print(Links(argv[1]).get_imdb(['0114709', '0113497', '0114709'], ['director']))
