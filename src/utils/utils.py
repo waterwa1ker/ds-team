@@ -1,4 +1,8 @@
+from sys import path
+
 from constants.body_constants import body_types
+
+path.append("..")
 
 def get_class_name(object):
     return type(object).__name__

@@ -1,6 +1,10 @@
-from os import path
-from utils import get_list_types, convert_types
+from os import path as os_path
+from sys import path
+
+from utils.utils import get_list_types, convert_types
 from constants.body_constants import headers, columns, body_types
+
+path.append("..")
 
 class FileParser:
 
@@ -9,14 +13,14 @@ class FileParser:
 
     def file_exists(self, file_path):
         
-        if not path.isfile(file_path):
+        if not os_path.isfile(file_path):
             raise Exception(f'File {file_path} not exists')
 
     def file_empty(self, file_path):
 
         TO_BITS = 8
 
-        if path.getsize(file_path) * TO_BITS == 0:
+        if os_path.getsize(file_path) * TO_BITS == 0:
             raise Exception(f'File {file_path} is empty')
 
 
