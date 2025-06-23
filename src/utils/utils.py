@@ -1,6 +1,8 @@
 from sys import path
 
 from constants.body_constants import body_types
+import requests as re
+from bs4 import BeautifulSoup as bs
 
 path.append("..")
 
@@ -43,8 +45,20 @@ def convert_types(body, class_type):
         result.append(result_line)
     return result
 
-def compare_duration(duration):
-    hours = duration[duration.find('T')+1:duration.find('H')]
-    minutes = duration[duration.find('H')+1:duration.find('M')]
+def convert_duration(duration):
+    hours = int(duration[duration.find('T')+1:duration.find('H')])
+    minutes = int(duration[duration.find('H')+1:duration.find('M')])
     
     return hours * 60 + minutes
+
+def get_page_by_movie(movie_id):
+
+    link = f'https://www.imdb.com/title/tt{movie_id}/?ref_=vp_close'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
+    }
+
+    page = re.get(link, headers=headers)
+    soup = bs(page.text, "html.parser")
+
+    return soup
