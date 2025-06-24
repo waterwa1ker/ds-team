@@ -35,6 +35,8 @@ class Tags(Data):
         top-n longest tags in terms of the number of characters.
         Drop the duplicates. It is a list of the tags.
         """
+        # Не понял, что сделать надо. Какой-то тупизм если честно
+        
         return big_tags
 
     def most_popular(self, n):
@@ -43,14 +45,28 @@ class Tags(Data):
         It is a dict where the keys are tags and the values are the counts.
         Drop the duplicates. Sort it by counts descendingly.
         """
-        return popular_tags
+        
+        popular_tags = {}
+        tags = self.__get_tags()
+        for tag in tags:
+            if tag in popular_tags:
+                popular_tags[tag] += 1
+            else:
+                popular_tags[tag] = 1
+        return dict(sorted(popular_tags.items(), key=lambda x: x[1], reverse=True)[:n])
 
     def tags_with(self, word):
         """
         The method returns all unique tags that include the word given as the argument.
         Drop the duplicates. It is a list of the tags. Sort it by tag names alphabetically.
         """
-        return tags_with_word
+        
+        tags_with_word = []
+        tags = self.__get_tags()
+        for tag in tags:
+            if word in tag and tag not in tags_with_word:
+                tags_with_word.append(tag)
+        return list(sorted(tags_with_word))
 
     def __get_tags(self):
         return list(map(lambda x: x[2], self.data))

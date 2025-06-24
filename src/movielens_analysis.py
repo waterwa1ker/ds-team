@@ -17,3 +17,5 @@ if __name__ == '__main__':
         #print(Movies(argv[2]).most_genres(2))
         print(Tags(argv[3]).most_words(3))
         print(Tags(argv[3]).longest(4))
+        print(Tags(argv[3]).most_popular(5))
+        print(Tags(argv[3]).tags_with('m'))
