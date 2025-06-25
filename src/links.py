@@ -21,14 +21,14 @@ class Links(Data):
         for movie_key, movie_value in movies_info.items():
             tmp = [movie_key, *movie_value]
             movies_list.append(tmp)
-        return movies_list
+        return sorted(movies_list, key=lambda x: x[0], reverse=True)
 
     def top_directors(self, n):
         """
             Метод возвращает словарь, ключами которого являются имена режиссеров, а значения - количество фильмов, выпущенных ими.
         """
 
-        movies_info = self.get_imdb(self.__get_imdb_id(), ['director'])
+        movies_info = self.__get_movie_info(self.__get_imdb_id(), ['director'])
 
         directors = self.__convert_to_directors(movies_info)
         return dict(sorted(directors.items(), key=lambda x: x[1], reverse=True)[:n])
@@ -68,7 +68,6 @@ class Links(Data):
         movies = self.__get_movie_info(self.__get_imdb_id(), ['budget', 'duration', 'name'])
         converted_movies = self.__convert_duration(movies)
 
-        print(converted_movies)
         top_cost_movies = {k: round(v[0] / v[1], 2) for k, v in converted_movies.items()}
         return dict(sorted(top_cost_movies.items(), key=lambda x: x[1], reverse=True)[:n])
 
@@ -95,6 +94,8 @@ class Links(Data):
                 for field in list_of_fields:
                     field_value = json_data.get(field)
                     if field_value and field not in [additional_params, 'name']:
+                        if field == 'director':
+                            field_value = field_value[0]['name']
                         movie_info.append(field_value)
                     if field == 'name':
                         movie_name = field_value
@@ -116,9 +117,9 @@ class Links(Data):
 
         directors = {}
 
-        for _, director in movies_info.items():
-            director_name = director[0][0]['name']
-            if director_name in movies_info:
+        for _, director_name_list in movies_info.items():
+            director_name = director_name_list[0]
+            if director_name in directors:
                 directors[director_name] += 1
             else:
                 directors[director_name] = 1
