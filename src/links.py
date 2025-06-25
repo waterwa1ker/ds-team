@@ -16,9 +16,13 @@ class Links(Data):
         """
         
         movies_info = self.__get_movie_info(list_of_movies, list_of_fields)
-            
-        return dict(sorted(movies_info.items(), key=lambda x: x[0], reverse=True))
-        
+
+        movies_list = []
+        for movie_key, movie_value in movies_info.items():
+            tmp = [movie_key, *movie_value]
+            movies_list.append(tmp)
+        return movies_list
+
     def top_directors(self, n):
         """
             Метод возвращает словарь, ключами которого являются имена режиссеров, а значения - количество фильмов, выпущенных ими.
