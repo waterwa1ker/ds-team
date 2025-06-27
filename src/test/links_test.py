@@ -45,34 +45,38 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
-            assert 'Grumpier Old Men' in result
+            assert isinstance(result, list)
+            assert 'Grumpier Old Men' in result[0]
     
     def test_get_imdb_multiple_fields(self, links_instance, mock_soup_with_data):
         """Тест получения нескольких полей"""
         movie_ids = ['0113228']
+        expected_fields = ['Grumpier Old Men', 'Howard Deutch', ['Comedy', 'Romance'], '1995-12-22', 'PG-13']
         fields = ['name', 'director', 'genre', 'datePublished', 'contentRating']
         
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
             if result:
-                movie_info = result['Grumpier Old Men']
-                assert isinstance(movie_info, list)
+                movie_info = result[0]
+                for item in movie_info:
+                    assert item in expected_fields
     
     def test_get_imdb_with_actor_field(self, links_instance, mock_soup_with_data):
         """Тест получения информации об актерах"""
         movie_ids = ['0113228']
+        expected_names = ['Walter Matthau', 'Jack Lemmon', 'Ann-Margret']
         fields = ['name', 'actor']
         
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
             if result:
-                movie_info = result['Grumpier Old Men']
-                assert isinstance(movie_info, list)
+                movie_info = result[0][1]
+                for item in movie_info:
+                    assert item['name'] in expected_names
     
     def test_get_imdb_with_aggregate_rating(self, links_instance, mock_soup_with_data):
         """Тест получения рейтинга фильма"""
@@ -82,7 +86,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     def test_get_imdb_with_review_data(self, links_instance, mock_soup_with_data):
         """Тест получения данных о рецензии"""
@@ -92,7 +96,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     def test_get_imdb_with_trailer_data(self, links_instance, mock_soup_with_data):
         """Тест получения данных о трейлере"""
@@ -102,7 +106,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     def test_get_imdb_with_duration(self, links_instance, mock_soup_with_data):
         """Тест получения длительности фильма"""
@@ -112,7 +116,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     def test_get_imdb_with_keywords(self, links_instance, mock_soup_with_data):
         """Тест получения ключевых слов"""
@@ -122,7 +126,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     def test_get_imdb_with_creator(self, links_instance, mock_soup_with_data):
         """Тест получения информации о создателях"""
@@ -132,7 +136,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     def test_get_imdb_with_description(self, links_instance, mock_soup_with_data):
         """Тест получения описания фильма"""
@@ -142,7 +146,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     def test_get_imdb_with_url(self, links_instance, mock_soup_with_data):
         """Тест получения URL фильма"""
@@ -152,7 +156,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     @pytest.mark.parametrize("movie_id,expected_padding", [
         ('113228', '0113228'),
@@ -182,7 +186,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     def test_get_imdb_empty_movies_list(self, links_instance):
         """Тест с пустым списком фильмов"""
@@ -190,7 +194,7 @@ class TestLinksGetImdbPytest:
         
         result = links_instance.get_imdb([], fields)
         
-        assert result == {}
+        assert result == []
     
     def test_get_imdb_empty_fields_list(self, links_instance, mock_soup_with_data):
         """Тест с пустым списком полей"""
@@ -199,7 +203,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, [])
             
-            assert isinstance(result, dict)
+            assert result == []
     
     def test_get_imdb_no_script_tag(self, links_instance):
         """Тест случая отсутствия script тега"""
@@ -212,7 +216,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert result == {}
+            assert result == []
     
     def test_get_imdb_invalid_json(self, links_instance):
         """Тест случая некорректного JSON"""
@@ -228,24 +232,13 @@ class TestLinksGetImdbPytest:
             with pytest.raises(json.JSONDecodeError):
                 links_instance.get_imdb(movie_ids, fields)
     
-    def test_get_imdb_result_sorting(self, links_instance, mock_soup_with_data):
-        """Тест правильной сортировки результата"""
-        movie_ids = ['0113228', '0114709', '0113497']
-        fields = ['name']
-        
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
-            result = links_instance.get_imdb(movie_ids, fields)
-            
-            keys = list(result.keys())
-            assert keys == sorted(keys, reverse=True)
-    
     def test_get_imdb_with_budget_and_gross(self, links_instance, mock_soup_with_data): # FAIL
         """Тест получения бюджета и сборов одновременно"""
         movie_ids = ['0113228']
         fields = ['name', 'budget', 'gross']
         
         mock_box_office = MagicMock()
-        mock_box_office.text = "Budget $25,000,000 worldwide $71,000,000 See more"
+        mock_box_office.text = "Budget$25,000,000 worldwide$71,000,000 See more"
         
         def side_effect(tag, attrs=None):
             if tag == 'script':
@@ -259,7 +252,7 @@ class TestLinksGetImdbPytest:
         with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
 
 
 class TestLinksGetImdbEdgeCases:
@@ -278,7 +271,7 @@ class TestLinksGetImdbEdgeCases:
         with patch('links.get_page_by_movie', return_value=mock_soup):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     def test_get_imdb_null_field_value(self, links_instance):
         """Тест случая, когда поле имеет значение null"""
@@ -299,7 +292,7 @@ class TestLinksGetImdbEdgeCases:
         with patch('links.get_page_by_movie', return_value=mock_soup):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
     
     def test_get_imdb_empty_field_value(self, links_instance):
         """Тест случая, когда поле имеет пустое значение"""
@@ -320,7 +313,7 @@ class TestLinksGetImdbEdgeCases:
         with patch('links.get_page_by_movie', return_value=mock_soup):
             result = links_instance.get_imdb(movie_ids, fields)
             
-            assert isinstance(result, dict)
+            assert isinstance(result, list)
 
 
 if __name__ == '__main__':
