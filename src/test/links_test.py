@@ -8,6 +8,7 @@ project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
 from links import Links
+from imdb_requester import ImdbRequester
 
 
 @pytest.fixture
@@ -15,6 +16,10 @@ def links_instance():
     """Фикстура для создания экземпляра класса Links"""
     links_file = '../info/links.csv'
     return Links(links_file)
+
+@pytest.fixture
+def imdb_request_instance():
+    return ImdbRequester()
 
 
 @pytest.fixture
@@ -42,12 +47,12 @@ def test_movie_data_2():
 class TestLinksGetImdbPytest:
     """Тесты для функции get_imdb класса Links с использованием pytest"""
     
-    def test_get_imdb_basic_functionality(self, links_instance, mock_soup_with_data):
+    def test_get_imdb_basic_functionality(self, links_instance, imdb_request_instance, mock_soup_with_data):
         """Базовый тест функциональности get_imdb"""
         movie_ids = ['0113228']
         fields = ['name', 'director']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -59,7 +64,7 @@ class TestLinksGetImdbPytest:
         expected_fields = ['Grumpier Old Men', 'Howard Deutch', ['Comedy', 'Romance'], '1995-12-22', 'PG-13']
         fields = ['name', 'director', 'genre', 'datePublished', 'contentRating']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -74,7 +79,7 @@ class TestLinksGetImdbPytest:
         expected_names = ['Walter Matthau', 'Jack Lemmon', 'Ann-Margret']
         fields = ['name', 'actor']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -88,7 +93,7 @@ class TestLinksGetImdbPytest:
         movie_ids = ['0113228']
         fields = ['name', 'aggregateRating']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -98,7 +103,7 @@ class TestLinksGetImdbPytest:
         movie_ids = ['0113228']
         fields = ['name', 'review']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -108,7 +113,7 @@ class TestLinksGetImdbPytest:
         movie_ids = ['0113228']
         fields = ['name', 'trailer']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -118,7 +123,7 @@ class TestLinksGetImdbPytest:
         movie_ids = ['0113228']
         fields = ['name', 'duration']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -128,7 +133,7 @@ class TestLinksGetImdbPytest:
         movie_ids = ['0113228']
         fields = ['name', 'keywords']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -138,7 +143,7 @@ class TestLinksGetImdbPytest:
         movie_ids = ['0113228']
         fields = ['name', 'creator']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -148,7 +153,7 @@ class TestLinksGetImdbPytest:
         movie_ids = ['0113228']
         fields = ['name', 'description']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -158,7 +163,7 @@ class TestLinksGetImdbPytest:
         movie_ids = ['0113228']
         fields = ['name', 'url']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -173,7 +178,7 @@ class TestLinksGetImdbPytest:
         """Параметризованный тест для проверки дополнения ID нулями"""
         fields = ['name']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data) as mock_get_page:
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data) as mock_get_page:
             links_instance.get_imdb([movie_id], fields)
             mock_get_page.assert_called_with(expected_padding)
     
@@ -188,7 +193,7 @@ class TestLinksGetImdbPytest:
         """Параметризованный тест различных комбинаций полей"""
         movie_ids = ['0113228']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -205,7 +210,7 @@ class TestLinksGetImdbPytest:
         """Тест с пустым списком полей"""
         movie_ids = ['0113228']
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, [])
             
             assert result == []
@@ -218,7 +223,7 @@ class TestLinksGetImdbPytest:
         mock_soup = MagicMock()
         mock_soup.find.return_value = None
         
-        with patch('links.get_page_by_movie', return_value=mock_soup):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert result == []
@@ -233,7 +238,7 @@ class TestLinksGetImdbPytest:
         mock_script.string = "invalid json"
         mock_soup.find.return_value = mock_script
         
-        with patch('links.get_page_by_movie', return_value=mock_soup):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup):
             with pytest.raises(json.JSONDecodeError):
                 links_instance.get_imdb(movie_ids, fields)
     
@@ -254,7 +259,7 @@ class TestLinksGetImdbPytest:
         
         mock_soup_with_data.find.side_effect = side_effect
         
-        with patch('links.get_page_by_movie', return_value=mock_soup_with_data):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup_with_data):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -273,7 +278,7 @@ class TestLinksGetImdbEdgeCases:
         mock_script.string = json.dumps(test_movie_data)
         mock_soup.find.return_value = mock_script
         
-        with patch('links.get_page_by_movie', return_value=mock_soup):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -294,7 +299,7 @@ class TestLinksGetImdbEdgeCases:
         mock_script.string = json.dumps(movie_data)
         mock_soup.find.return_value = mock_script
         
-        with patch('links.get_page_by_movie', return_value=mock_soup):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -315,7 +320,7 @@ class TestLinksGetImdbEdgeCases:
         mock_script.string = json.dumps(movie_data)
         mock_soup.find.return_value = mock_script
         
-        with patch('links.get_page_by_movie', return_value=mock_soup):
+        with patch('imdb_requester.ImdbRequester._ImdbRequester__get_page_by_movie', return_value=mock_soup):
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
@@ -324,7 +329,7 @@ class TestTopDirectors:
     """Тесты для проверки функции top_directors"""
     def test_top_directors(self, links_instance, test_movie_data_2):
         with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_2)):
-            with patch.object(links_instance, '_Links__get_movie_info', return_value=test_movie_data_2):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_2):
                 result = links_instance.top_directors(3)
                 assert isinstance(result, dict)
                 assert len(result) == 3
