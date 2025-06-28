@@ -1,4 +1,5 @@
 from data import Data
+from links import Links
 from utils.utils import get_class_name
 
 class Ratings(Data):
@@ -50,6 +51,15 @@ class Ratings(Data):
             It is a dict where the keys are movie titles and the values are numbers.
      Sort it by numbers descendingly.
             """
+            top_movies = {}
+
+            movie_ids = self.__get_movie_id()
+            imdb_ids = list(map(lambda x: self.__find_imdb_id_by_movie_id(str(x)), movie_ids))
+
+            links = Links('info/links.csv')
+            movies = links.get_imdb(imdb_ids, ['datePublished', 'name'])
+            print(movies)
+
             return top_movies
         
         def top_by_ratings(self, n, metric='average'):
@@ -69,7 +79,11 @@ class Ratings(Data):
             The values should be rounded to 2 decimals.
             """
             return top_movies
-        
+
+
+        def __get_movie_id(self):
+            return list(map(lambda x: x[1], self.ratings.data))
+
         def __get_timestamp(self):
             return list(map(lambda x: x[3], self.ratings.data))
         
