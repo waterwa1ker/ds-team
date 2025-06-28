@@ -1,5 +1,5 @@
 from utils.file_parser import FileParser
-from utils.utils import get_class_name, get_column_index, print_file, convert_types
+from utils.utils import get_class_name, convert_types
 
 class Data:
 
@@ -13,14 +13,6 @@ class Data:
         self.file_parser.file_empty(file_path)
         
         self.__open_file(file_path)
-
-
-    def sort_by_column(self, column_name, reverse = False):
-        self.file_parser.check_column_name(get_class_name(self), column_name)
-
-        column_index = get_column_index(self.header, column_name)
-        tmp_data = sorted(self.data, key = lambda x: x[column_index], reverse = reverse)
-        print_file(self.header, tmp_data) #do we need this???
 
     def __open_file(self, file_path):
         with open(file_path, 'r') as f:

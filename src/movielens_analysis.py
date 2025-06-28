@@ -27,4 +27,4 @@ if __name__ == '__main__':
         # print(movies.dist_by_year())
         # print(movies.dist_by_rating())
         # print(movies.find_imdb_id_by_movie_id('1'))
-        print(movies.top_by_num_of_ratings(3))
+        print(movies.get_movie_id())

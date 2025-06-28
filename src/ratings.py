@@ -1,6 +1,6 @@
 from data import Data
 from links import Links
-from utils.utils import get_class_name
+from utils.utils import get_class_name, get_class_column
 
 class Ratings(Data):
 
@@ -81,14 +81,14 @@ class Ratings(Data):
             return top_movies
 
 
-        def __get_movie_id(self):
-            return list(map(lambda x: x[1], self.ratings.data))
+        def get_movie_id(self):
+            return get_class_column(get_class_name(self.ratings), 'movieId', self.ratings.data)
 
         def __get_timestamp(self):
-            return list(map(lambda x: x[3], self.ratings.data))
+            return get_class_column(get_class_name(self.ratings), 'timestamp')
         
         def __get_rating(self):
-            return list(map(lambda x: x[2], self.ratings.data))
+            return get_class_column(get_class_name(self.ratings), 'rating')
         
         # это не совсем точно
         def __find_year_from_timestamp(self, timestamp):
