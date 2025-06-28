@@ -33,6 +33,11 @@ def mock_soup_with_data(test_movie_data):
     mock_soup.find.return_value = mock_script
     return mock_soup
 
+@pytest.fixture
+def test_movie_data_2():
+    with open('../info/info4.json', 'r', encoding='utf-8') as f:
+        movie_data = json.load(f)
+        return movie_data
 
 class TestLinksGetImdbPytest:
     """Тесты для функции get_imdb класса Links с использованием pytest"""
@@ -314,6 +319,22 @@ class TestLinksGetImdbEdgeCases:
             result = links_instance.get_imdb(movie_ids, fields)
             
             assert isinstance(result, list)
+
+class TestTopDirectors:
+    """Тесты для проверки функции top_directors"""
+    def test_top_directors(self, links_instance, test_movie_data_2):
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_2)):
+            with patch.object(links_instance, '_Links__get_movie_info', return_value=test_movie_data_2):
+                result = links_instance.top_directors(3)
+                assert isinstance(result, dict)
+                assert len(result) == 3
+
+                expected_result = {
+                    "Christopher Nolan": 2,
+                    "David Fincher": 2,
+                    "Frank Darabont": 1
+                }
+                assert result == expected_result
 
 
 if __name__ == '__main__':
