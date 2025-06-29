@@ -24,14 +24,14 @@ def imdb_request_instance():
 
 @pytest.fixture
 def test_movie_data():
-    """Фикстура для загрузки тестовых данных из info.json"""
-    with open('../info/info.json', 'r', encoding='utf-8') as f:
+    """Фикстура для загрузки тестовых данных для get_imdb из get_imdb.json"""
+    with open(f'{project_root}/info/links/get_imdb.json', 'r', encoding='utf-8') as f:
         return json.load(f)
 
 
 @pytest.fixture
 def mock_soup_with_data(test_movie_data):
-    """Фикстура для создания мока BeautifulSoup с данными"""
+    """Фикстура для создания мока BeautifulSoup с данными для теста get_imdb"""
     mock_soup = MagicMock()
     mock_script = MagicMock()
     mock_script.string = json.dumps(test_movie_data)
@@ -40,7 +40,15 @@ def mock_soup_with_data(test_movie_data):
 
 @pytest.fixture
 def test_movie_data_2():
-    with open('../info/info4.json', 'r', encoding='utf-8') as f:
+    """Фикстура для создания данных для теста top_directors"""
+    with open(f'{project_root}/info/links/top_directors.json', 'r', encoding='utf-8') as f:
+        movie_data = json.load(f)
+        return movie_data
+
+@pytest.fixture
+def test_movie_data_3():
+    """Фикстура для создания данных для теста most_expensive"""
+    with open(f'{project_root}/info/links/most_expensive.json', 'r', encoding='utf-8') as f:
         movie_data = json.load(f)
         return movie_data
 
@@ -327,7 +335,8 @@ class TestLinksGetImdbEdgeCases:
 
 class TestTopDirectors:
     """Тесты для проверки функции top_directors"""
-    def test_top_directors(self, links_instance, test_movie_data_2):
+    def test_top_directors_default(self, links_instance, test_movie_data_2):
+        """Тест на обычное поведение функции"""
         with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_2)):
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_2):
                 result = links_instance.top_directors(3)
@@ -340,7 +349,68 @@ class TestTopDirectors:
                     "Frank Darabont": 1
                 }
                 assert result == expected_result
+    
+    def test_top_directors_zero(self, links_instance, test_movie_data_2):
+        """Тест при нулевом количестве позиций"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_2)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_2):
+                result = links_instance.top_directors(0)
+                assert isinstance(result, dict)
+                assert len(result) == 0
+                assert result == {}
+    
+    def test_top_directors_empty_data(self, links_instance):
+        """Тест при пустых данных"""
+        movie_data = {}
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=[]):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=movie_data):
+                result = links_instance.top_directors(3)
+                assert isinstance(result, dict)
+                assert len(result) == 0
+                assert result == {}
+    
+    def test_top_directors_negative(self, links_instance, test_movie_data_2):
+        """Тест при отрицательном значении параметра"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_2)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_2):
+                result = links_instance.top_directors(-8)
+                assert isinstance(result, dict)
+                assert len(result) == 0
+                assert result == {}
+    
+    def test_top_directors_parameter_bigger_than_data(self, links_instance, test_movie_data_2):
+        """Тест при параметре, который больше входных данных"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_2)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_2):
+                result = links_instance.top_directors(23)
+                assert isinstance(result, dict)
+                assert len(result) == 8
 
+class TestMostExpensive:
+    def test_most_expensive_default(self, links_instance, test_movie_data_3):
+        """Тест на обычное поведение функции"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_3)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_3):
+                expected_result = {'2': 1500, '4': 2000, '7': 4000}
+                result = links_instance.most_expensive(3)
+                assert len(result) == 3
+                assert result == expected_result
+    
+    def test_most_expensive_zero(self, links_instance, test_movie_data_3):
+        """Тест при нулевом количестве позиций"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_3)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_3):
+                result = links_instance.most_expensive(0)
+                assert len(result) == 0
+                assert result == {}
+    
+    def test_most_expensive_negative(self, links_instance, test_movie_data_3):
+        """Тест при отрицательном параметре"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_3)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_3):
+                result = links_instance.most_expensive(-7)
+                assert len(result) == 0
+                assert result == {}
 
 if __name__ == '__main__':
     pytest.main([__file__, '-v']) 
