@@ -52,6 +52,13 @@ def test_movie_data_3():
         movie_data = json.load(f)
         return movie_data
 
+@pytest.fixture
+def test_movie_data_4():
+    """Фикстура для создания данных для теста most_profitable"""
+    with open(f'{project_root}/info/links/most_profitable.json', 'r', encoding='utf-8') as f:
+        movie_data = json.load(f)
+        return movie_data
+
 class TestLinksGetImdbPytest:
     """Тесты для функции get_imdb класса Links с использованием pytest"""
     
@@ -411,6 +418,84 @@ class TestMostExpensive:
                 result = links_instance.most_expensive(-7)
                 assert len(result) == 0
                 assert result == {}
+    
+    def test_most_expensive_empty_data(self, links_instance, test_movie_data_3):
+        """Тест при пустых данных"""
+        movie_info = {}
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=[]):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=movie_info):
+                result = links_instance.most_expensive(3)
+                assert len(result) == 0
+                assert result == {}
+    
+    def test_most_expensive_parameter_bigger(self, links_instance, test_movie_data_3):
+        """Тест при параметре, большем входных данных"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_3)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_3):
+                expected_result = {
+                    "1": 1000,
+                    "2": 1500,
+                    "3": 1500,
+                    "4": 2000,
+                    "5": 1,
+                    "6": 500,
+                    "7": 4000
+                }
+                result = links_instance.most_expensive(12)
+                assert len(result) == 7
+                assert result == expected_result
 
+class TestMostProfitable:
+    def test_most_profitable_default(self, links_instance, test_movie_data_4):
+        """Тест на обычное поведение функции"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1', '2', '3', '4', '5', '6', '7']):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_4):
+                expected_result = {'1': 15.0, '5': 2.0, '7': 1.6243918682943073}
+                result = links_instance.most_profitable(3)
+                assert len(result) == 3
+                assert result == expected_result
+
+    def test_most_profitable_zero(self, links_instance, test_movie_data_4):
+        """Тест при нулевом количестве позиций"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_4)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_4):
+                result = links_instance.most_profitable(0)
+                assert len(result) == 0
+                assert result == {}
+    
+    def test_most_profitable_negative(self, links_instance, test_movie_data_4):
+        """Тест при отрицательном параметре"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_4)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_4):
+                result = links_instance.most_profitable(-7)
+                assert len(result) == 0
+                assert result == {}
+    
+    def test_most_profitable_empty_data(self, links_instance):
+        """Тест при пустых данных"""
+        movie_info = {}
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=[]):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=movie_info):
+                result = links_instance.most_profitable(3)
+                assert len(result) == 0
+                assert result == {}
+    
+    def test_most_profitable_parameter_bigger(self, links_instance, test_movie_data_4):
+        """Тест при параметре, большем входных данных"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_4)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_4):
+                expected_result = {
+                    '1': 15.0,
+                    '2': 1.111111,
+                    '3': 0.998,
+                    '4': 1.0,
+                    '5': 2.0,
+                    '6': 0.8571428571428571,
+                    '7': 1.6243918682943073,
+                }
+                result = links_instance.most_profitable(12)
+                assert len(result) == 7
+                assert result == expected_result
+    
 if __name__ == '__main__':
     pytest.main([__file__, '-v']) 
