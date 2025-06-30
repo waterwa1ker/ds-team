@@ -1,5 +1,5 @@
 from data import Data
-from utils.utils import get_class_name
+from utils.utils import get_class_name, is_number_natural, is_number_less_than_length, get_class_column
 
 class Movies(Data):
     
@@ -41,7 +41,7 @@ class Movies(Data):
             if movie_genre not in genres_dict:
                 genres_dict[movie_genre] = 1
             else:
-                genres_dict[movie_genre] +=1
+                genres_dict[movie_genre] += 1
         return dict(sorted(genres_dict.items(), key=lambda x: x[1], reverse=True))
 
     def most_genres(self, n):
@@ -50,15 +50,19 @@ class Movies(Data):
         the values are the number of genres of the movie. Sort it by numbers descendingly.
         """
 
+        is_number_natural(n)
+
         movies = {}
         for movie in self.data:
             movie_name = movie[1]
             movie_genres = movie[2].split('|')
             movies[movie_name] = len(movie_genres)
+
+        is_number_less_than_length(n, len(movies))
         return dict(sorted(movies.items(), key=lambda x: x[1], reverse=True)[:n])
 
     def __get_movie_titles(self):
-        return list(map(lambda x: x[1], self.data))
+        return get_class_column(get_class_name(self), 'title', self.data)
 
     def __get_movie_genres(self):
-        return list(map(lambda x: x[2], self.data))
+        return get_class_column(get_class_name(self), 'genres', self.data)

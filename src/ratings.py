@@ -85,10 +85,10 @@ class Ratings(Data):
             return get_class_column(get_class_name(self.ratings), 'movieId', self.ratings.data)
 
         def __get_timestamp(self):
-            return get_class_column(get_class_name(self.ratings), 'timestamp')
+            return get_class_column(get_class_name(self.ratings), 'timestamp', self.ratings.data)
         
         def __get_rating(self):
-            return get_class_column(get_class_name(self.ratings), 'rating')
+            return get_class_column(get_class_name(self.ratings), 'rating', self.ratings.data)
         
         # это не совсем точно
         def __find_year_from_timestamp(self, timestamp):

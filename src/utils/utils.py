@@ -1,6 +1,7 @@
 from sys import path
 
 from constants.body_constants import body_types, columns
+from exceptions.invalid_number_exception import InvalidNumberException
 
 path.append("..")
 
@@ -47,3 +48,11 @@ def calculate_duration(duration):
     minutes = int(duration[duration.find('H')+1:duration.find('M')])
     
     return hours * 60 + minutes
+
+def is_number_natural(n):
+	if n < 1:
+		raise InvalidNumberException('Number must be natural number')
+
+def is_number_less_than_length(n, length):
+    if n > length:
+        raise InvalidNumberException('Number must be less than length')

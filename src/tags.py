@@ -1,5 +1,5 @@
 from data import Data
-from utils.utils import get_class_name
+from utils.utils import get_class_name, is_number_natural, is_number_less_than_length
 
 class Tags(Data):
 
@@ -13,11 +13,16 @@ class Tags(Data):
  where the keys are tags and the values are the number of words inside the tag.
  Drop the duplicates. Sort it by numbers descendingly.
         """
+
+        is_number_natural(n)
+
         big_tags = {}
 
         tags = self.__get_tags()
         for tag in tags:
             big_tags[tag] = len(tag.split(" "))
+
+        is_number_less_than_length(n, len(big_tags))
         return dict(sorted(big_tags.items(), key=lambda x: x[1], reverse=True)[:n])
 
     def longest(self, n):
@@ -25,8 +30,12 @@ class Tags(Data):
         The method returns top-n longest tags in terms of the number of characters.
         It is a list of the tags. Drop the duplicates. Sort it by numbers descendingly.
         """
+
+        is_number_natural(n)
+
         tags = self.__get_tags()
 
+        is_number_less_than_length(n, len(tags))
         return list(sorted(tags, key=lambda x: len(x), reverse=True)[:n])
 
     def most_words_and_longest(self, n):
@@ -45,6 +54,8 @@ class Tags(Data):
         It is a dict where the keys are tags and the values are the counts.
         Drop the duplicates. Sort it by counts descendingly.
         """
+
+        is_number_natural(n)
         
         popular_tags = {}
         tags = self.__get_tags()
@@ -53,6 +64,8 @@ class Tags(Data):
                 popular_tags[tag] += 1
             else:
                 popular_tags[tag] = 1
+
+        is_number_less_than_length(n, len(popular_tags))
         return dict(sorted(popular_tags.items(), key=lambda x: x[1], reverse=True)[:n])
 
     def tags_with(self, word):

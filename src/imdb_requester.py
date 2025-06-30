@@ -69,7 +69,7 @@ class ImdbRequester:
 
         return info_value
 
-    def __get_page_by_movie(movie_id):
+    def __get_page_by_movie(self, movie_id):
 
         link = f'https://www.imdb.com/title/tt{movie_id}/?ref_=vp_close'
         headers = {
