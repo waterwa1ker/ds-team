@@ -59,6 +59,20 @@ def test_movie_data_4():
         movie_data = json.load(f)
         return movie_data
 
+@pytest.fixture
+def test_movie_data_5():
+    """Фикстура для создания данных для теста longest"""
+    with open(f'{project_root}/info/links/longest.json', 'r',encoding='utf-8') as f:
+        movie_data = json.load(f)
+        return movie_data
+
+@pytest.fixture
+def test_movie_data_6():
+    """Фикстура для создания данных для теста longest"""
+    with open(f'{project_root}/info/links/top_cost_per_minute.json', 'r',encoding='utf-8') as f:
+        movie_data = json.load(f)
+        return movie_data
+
 class TestLinksGetImdbPytest:
     """Тесты для функции get_imdb класса Links с использованием pytest"""
     
@@ -363,7 +377,7 @@ class TestTopDirectors:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_2):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.top_directors(0)
-                assert 'Number must be natural number' in str(exc_info)
+                assert 'Number must be natural number' == exc_info.value.args[0]
     
     def test_top_directors_empty_data(self, links_instance):
         """Тест при пустых данных"""
@@ -372,7 +386,7 @@ class TestTopDirectors:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=movie_data):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.top_directors(3)
-                assert 'Number must be less than length' in str(exc_info)
+                assert 'Number must be less than length' == exc_info.value.args[0]
     
     def test_top_directors_negative(self, links_instance, test_movie_data_2):
         """Тест при отрицательном значении параметра"""
@@ -380,7 +394,7 @@ class TestTopDirectors:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_2):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.top_directors(-12)
-                assert 'Number must be natural number' in str(exc_info)
+                assert 'Number must be natural number' == exc_info.value.args[0]
     
     def test_top_directors_parameter_bigger_than_data(self, links_instance, test_movie_data_2):
         """Тест при параметре, который больше входных данных"""
@@ -388,7 +402,7 @@ class TestTopDirectors:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_2):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.top_directors(48)
-                assert 'Number must be less than length' in str(exc_info)
+                assert 'Number must be less than length' == exc_info.value.args[0]
 
 class TestMostExpensive:
     def test_most_expensive_default(self, links_instance, test_movie_data_3):
@@ -406,7 +420,7 @@ class TestMostExpensive:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_3):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.most_expensive(0)
-                assert 'Number must be natural number' in str(exc_info)
+                assert 'Number must be natural number' == exc_info.value.args[0]
     
     def test_most_expensive_negative(self, links_instance, test_movie_data_3):
         """Тест при отрицательном параметре"""
@@ -414,7 +428,7 @@ class TestMostExpensive:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_3):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.most_expensive(-7)
-                assert 'Number must be natural number' in str(exc_info)
+                assert 'Number must be natural number' == exc_info.value.args[0]
     
     def test_most_expensive_empty_data(self, links_instance):
         """Тест при пустых данных"""
@@ -423,7 +437,7 @@ class TestMostExpensive:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=movie_info):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.most_expensive(4)
-                assert 'Number must be less than length' in str(exc_info)
+                assert 'Number must be less than length' == exc_info.value.args[0]
     
     def test_most_expensive_parameter_bigger(self, links_instance, test_movie_data_3):
         """Тест при параметре, большем входных данных"""
@@ -431,7 +445,7 @@ class TestMostExpensive:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_3):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.most_expensive(45)
-                assert 'Number must be less than length' in str(exc_info)
+                assert 'Number must be less than length' == exc_info.value.args[0]
 
 class TestMostProfitable:
     def test_most_profitable_default(self, links_instance, test_movie_data_4):
@@ -449,7 +463,7 @@ class TestMostProfitable:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_4):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.most_profitable(0)
-                assert 'Number must be natural number' in str(exc_info)
+                assert 'Number must be natural number' == exc_info.value.args[0]
     
     def test_most_profitable_negative(self, links_instance, test_movie_data_4):
         """Тест при отрицательном параметре"""
@@ -457,7 +471,7 @@ class TestMostProfitable:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_4):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.most_profitable(-5)
-                assert 'Number must be natural number' in str(exc_info)
+                assert 'Number must be natural number' == exc_info.value.args[0]
     
     def test_most_profitable_empty_data(self, links_instance):
         """Тест при пустых данных"""
@@ -466,7 +480,7 @@ class TestMostProfitable:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=movie_info):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.most_profitable(3)
-                assert 'Number must be less than length' in str(exc_info)
+                assert 'Number must be less than length' == exc_info.value.args[0]
     
     def test_most_profitable_parameter_bigger(self, links_instance, test_movie_data_4):
         """Тест при параметре, большем входных данных"""
@@ -474,7 +488,95 @@ class TestMostProfitable:
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_4):
                 with pytest.raises(InvalidNumberException) as exc_info:
                     links_instance.most_profitable(12)
-                assert 'Number must be less than length' in str(exc_info)
+                assert 'Number must be less than length' == exc_info.value.args[0]
+
+class TestLongest:
+    def test_longest_default(self, links_instance, test_movie_data_5):
+        """Тест на обычное поведение функции"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_5)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_5):
+                result = links_instance.longest(3)
+                assert len(result) == 3
+                assert result == 'gay'
+
+    def test_longest_zero(self, links_instance, test_movie_data_5):
+        """Тест при нулевом количестве позиций"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_5)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_5):
+                with pytest.raises(InvalidNumberException) as exc_info:
+                    links_instance.longest(0)
+                assert 'Number must be natural number' == exc_info.value.args[0]
+    
+    def test_longest_negative(self, links_instance, test_movie_data_5):
+        """Тест при отрицательном параметре"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_5)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_5):
+                with pytest.raises(InvalidNumberException) as exc_info:
+                    links_instance.longest(-5)
+                assert 'Number must be natural number' == exc_info.value.args[0]
+    
+    def test_longest_empty_data(self, links_instance):
+        """Тест при пустых данных"""
+        movie_info = {}
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=[]):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=movie_info):
+                with pytest.raises(InvalidNumberException) as exc_info:
+                    links_instance.longest(3)
+                assert 'Number must be less than length' == exc_info.value.args[0]
+    
+    def test_longest_parameter_bigger(self, links_instance, test_movie_data_5):
+        """Тест при параметре, большем входных данных"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_5)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_5):
+                with pytest.raises(InvalidNumberException) as exc_info:
+                    links_instance.longest(12)
+                assert 'Number must be less than length' == exc_info.value.args[0]
+
+class TestTopCostPerMinute:
+    def test_top_cost_per_minute_default(self, links_instance, test_movie_data_6):
+        """Тест на обычное поведение функции"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_6)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_6):
+                expected_result = {'The Godfather': 1980.2,
+                                   'The Shawshank Redemption': 1075.27,
+                                   'The Silence of the Lambs': 13.89}
+                result = links_instance.top_cost_per_minute(3)
+                assert len(result) == 3
+                assert result == expected_result
+
+    def test_top_cost_per_minute_zero(self, links_instance, test_movie_data_6):
+        """Тест при нулевом количестве позиций"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_6)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_6):
+                with pytest.raises(InvalidNumberException) as exc_info:
+                    links_instance.top_cost_per_minute(0)
+                assert 'Number must be natural number' == exc_info.value.args[0]
+    
+    def test_top_cost_per_minute_negative(self, links_instance, test_movie_data_6):
+        """Тест при отрицательном параметре"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_6)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_6):
+                with pytest.raises(InvalidNumberException) as exc_info:
+                    links_instance.top_cost_per_minute(-5)
+                assert 'Number must be natural number' == exc_info.value.args[0]
+    
+    def test_top_cost_per_minute_empty_data(self, links_instance):
+        """Тест при пустых данных"""
+        movie_info = {}
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=[]):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=movie_info):
+                with pytest.raises(InvalidNumberException) as exc_info:
+                    links_instance.top_cost_per_minute(3)
+                assert 'Number must be less than length' == exc_info.value.args[0]
+    
+    def test_top_cost_per_minute_parameter_bigger(self, links_instance, test_movie_data_6):
+        """Тест при параметре, большем входных данных"""
+        with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_6)):
+            with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_6):
+                with pytest.raises(InvalidNumberException) as exc_info:
+                    links_instance.top_cost_per_minute(12)
+                assert 'Number must be less than length' == exc_info.value.args[0]
+
     
 if __name__ == '__main__':
     pytest.main([__file__, '-v']) 
