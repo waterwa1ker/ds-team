@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from data import Data
 from utils.utils import get_class_name, is_number_natural, is_number_less_than_length
 
@@ -23,7 +24,7 @@ class Tags(Data):
             big_tags[tag] = len(tag.split(" "))
 
         is_number_less_than_length(n, len(big_tags))
-        return dict(sorted(big_tags.items(), key=lambda x: x[1], reverse=True)[:n])
+        return OrderedDict(sorted(big_tags.items(), key=lambda x: x[1], reverse=True)[:n])
 
     def longest(self, n):
         """
