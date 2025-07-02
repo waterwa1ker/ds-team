@@ -76,7 +76,7 @@ class Links(Data):
 
         is_number_natural(n)
 
-        movies = self.get_imdb(self.__get_imdb_id(), ['duration', 'name'])
+        movies = self.imdb_requester.get_movie_info(self.__get_imdb_id(), ['duration', 'name'])
 
         is_number_less_than_length(n, len(movies))
         return dict(sorted(movies.items(), key=lambda x: self.converter.convert_duration(x[1][0]), reverse = True)[:n])
