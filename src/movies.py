@@ -18,7 +18,7 @@ class Movies(Data):
         movie_titles = self.__get_movie_titles()
         years = []
         for movie_title in movie_titles:
-            year = movie_title[movie_title.find('(')+1:movie_title.find(')')]
+            year = movie_title[movie_title.rfind('(')+1:movie_title.rfind(')')]
             years.append(year)
         for year in years:
             if year not in years_dict:

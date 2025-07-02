@@ -22,6 +22,10 @@ class Data:
             for line in f:
                 line = line.replace('\n', '')
                 line_list = line.split(',')
+                if '"' in line:
+                    name = line[line.index('"') + 1:line.index('"', line.index('"') + 1)]
+                    line_list = [line_list[0], name, line_list[-1]]
+                # [line_list[0], tmp, line_list[-1]]
                 self.file_parser.check_body_line(get_class_name(self), line_list)
                 self.data.append(line_list)
 

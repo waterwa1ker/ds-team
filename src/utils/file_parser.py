@@ -40,7 +40,7 @@ class FileParser:
 
         is_correct_data_len = len(body_list) == len(body_types[class_type])
         if not is_correct_data_len:
-            raise Exception(f'Data should contain {len(body_types[class_type])} elements in line')
+            raise Exception(f'Data should contain {len(body_types[class_type])} elements in line, {len(body_list), body_list}')
 
         tuple_types = get_list_types(body_list)
         is_correct_types = tuple_types == body_types[class_type]
