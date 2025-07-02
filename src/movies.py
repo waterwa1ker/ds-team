@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from data import Data
 from utils.utils import get_class_name, is_number_natural, is_number_less_than_length, get_class_column
 
@@ -26,7 +27,7 @@ class Movies(Data):
             else:
                 years_dict[year] += 1
 
-        return dict(sorted(years_dict.items(), key=lambda x: x[1], reverse=True))
+        return OrderedDict(dict(sorted(years_dict.items(), key=lambda x: x[1], reverse=True)))
 
     def dist_by_genres(self):
         """
@@ -42,7 +43,7 @@ class Movies(Data):
                 genres_dict[movie_genre] = 1
             else:
                 genres_dict[movie_genre] += 1
-        return dict(sorted(genres_dict.items(), key=lambda x: x[1], reverse=True))
+        return OrderedDict(dict(sorted(genres_dict.items(), key=lambda x: x[1], reverse=True)))
 
     def most_genres(self, n):
         """
@@ -59,7 +60,7 @@ class Movies(Data):
             movies[movie_name] = len(movie_genres)
 
         is_number_less_than_length(n, len(movies))
-        return dict(sorted(movies.items(), key=lambda x: x[1], reverse=True)[:n])
+        return OrderedDict(dict(sorted(movies.items(), key=lambda x: x[1], reverse=True)[:n]))
 
     def __get_movie_titles(self):
         return get_class_column(get_class_name(self), 'title', self.data)

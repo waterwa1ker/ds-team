@@ -45,42 +45,46 @@ class TestDistByRelease:
         result_default = movies_instance_default.dist_by_release()
         assert isinstance(result_default, dict)
         assert len(result_default) == 12
-        assert result_default == dist_by_release_default_expected
+        assert list(result_default.items()) == list(dist_by_release_default_expected.items())
 
         result_with_quotes = movies_instance_with_quotes.dist_by_release()
         assert isinstance(result_with_quotes, dict)
         assert len(result_with_quotes) == 11
-        assert result_with_quotes == dist_by_release_doublequoted_expected
+        assert list(result_with_quotes.items()) == list(dist_by_release_doublequoted_expected.items())
 
 class TestDistByGenres:
     def test_dist_by_genres_default(self, movies_instance_default, movies_instance_with_quotes, dist_by_genres_default_expected, dist_by_genres_doublequoted_expected):
         result_default = movies_instance_default.dist_by_genres()
         assert isinstance(result_default, dict)
         assert len(result_default) == 14
-        assert result_default == dist_by_genres_default_expected
+        assert list(result_default.items()) == list(dist_by_genres_default_expected.items())
 
         result_with_quotes = movies_instance_with_quotes.dist_by_genres()
         assert isinstance(result_with_quotes, dict)
         assert len(result_with_quotes) == 11
-        assert result_with_quotes == dist_by_genres_doublequoted_expected
+        assert list(result_with_quotes.items()) == list(dist_by_genres_doublequoted_expected.items())
 
 class TestMostGenres:
     def test_most_genres_default(self, movies_instance_default, movies_instance_with_quotes):
-        expected_data_default = {'Digging Up the Marrow (2014)': 5,
-                         'High School Musical (2006)': 5,
-                         'Space Buddies (2009)': 4}
+        expected_data_default = [
+            ('Digging Up the Marrow (2014)', 5),
+            ('High School Musical (2006)', 5),
+            ('Space Buddies (2009)', 4)
+        ]
         result_default = movies_instance_default.most_genres(3)
         assert isinstance(result_default, dict)
         assert len(result_default) == 3
-        assert result_default == expected_data_default
+        assert list(result_default.items()) == expected_data_default
 
-        expected_data_doublequoted = {'Edukators, The (Die Fetten Jahre sind vorbei) (2004)': 4,
-                                      'Brave One, The (2007)': 3,
-                                      'Getaway, The (1994)': 6}
+        expected_data_doublequoted = [
+            ('Getaway, The (1994)', 6),
+            ('Edukators, The (Die Fetten Jahre sind vorbei) (2004)', 4),
+            ('Brave One, The (2007)', 3)
+        ]
         result_with_quotes = movies_instance_with_quotes.most_genres(3)
         assert isinstance(result_with_quotes, dict)
         assert len(result_with_quotes) == 3
-        assert result_with_quotes == expected_data_doublequoted
+        assert list(result_with_quotes.items()) == expected_data_doublequoted
     
     def test_most_genres_zero(self, movies_instance_default, movies_instance_with_quotes):
         with pytest.raises(InvalidNumberException) as exc_info:

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from data import Data
 from links import Links
 from utils.utils import get_class_name, get_class_column
@@ -28,7 +29,7 @@ class Ratings(Data):
                     ratings_by_year[year] += 1
                 else:
                     ratings_by_year[year] = 1
-            return dict(sorted(ratings_by_year.items(), key=lambda x: x[1], reverse=True))
+            return OrderedDict(dict(sorted(ratings_by_year.items(), key=lambda x: x[1], reverse=True)))
         
         def dist_by_rating(self):
             """
@@ -43,7 +44,7 @@ class Ratings(Data):
                     ratings_distribution[rating] += 1
                 else:
                     ratings_distribution[rating] = 1
-            return dict(sorted(ratings_distribution.items(), key=lambda x: x[1], reverse=True))
+            return OrderedDict(dict(sorted(ratings_distribution.items(), key=lambda x: x[1], reverse=True)))
         
         def top_by_num_of_ratings(self, n):
             """

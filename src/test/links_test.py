@@ -364,12 +364,12 @@ class TestTopDirectors:
                 assert isinstance(result, dict)
                 assert len(result) == 3
 
-                expected_result = {
-                    "Christopher Nolan": 2,
-                    "David Fincher": 2,
-                    "Frank Darabont": 1
-                }
-                assert result == expected_result
+                expected_result = [
+                    ("Christopher Nolan", 2),
+                    ("David Fincher", 2),
+                    ("Frank Darabont", 1)
+                ]
+                assert list(result.items()) == expected_result
     
     def test_top_directors_zero(self, links_instance, test_movie_data_2):
         """Тест при нулевом количестве позиций"""
@@ -409,10 +409,14 @@ class TestMostExpensive:
         """Тест на обычное поведение функции"""
         with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_3)):
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_3):
-                expected_result = {'2': 1500, '4': 2000, '7': 4000}
+                expected_result = [
+                    ('7', 4000),
+                    ('4', 2000),
+                    ('2', 1500)
+                ]
                 result = links_instance.most_expensive(3)
                 assert len(result) == 3
-                assert result == expected_result
+                assert list(result.items()) == expected_result
     
     def test_most_expensive_zero(self, links_instance, test_movie_data_3):
         """Тест при нулевом количестве позиций"""
@@ -452,10 +456,14 @@ class TestMostProfitable:
         """Тест на обычное поведение функции"""
         with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1', '2', '3', '4', '5', '6', '7']):
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_4):
-                expected_result = {'1': 15.0, '5': 2.0, '7': 1.6243918682943073}
+                expected_result = [
+                    ('1', 15.0),
+                    ('5', 2.0),
+                    ('7', 1.6243918682943073)
+                ]
                 result = links_instance.most_profitable(3)
                 assert len(result) == 3
-                assert result == expected_result
+                assert list(result.items()) == expected_result
 
     def test_most_profitable_zero(self, links_instance, test_movie_data_4):
         """Тест при нулевом количестве позиций"""
@@ -537,12 +545,14 @@ class TestTopCostPerMinute:
         """Тест на обычное поведение функции"""
         with patch.object(links_instance, '_Links__get_imdb_id', return_value=['1'] * len(test_movie_data_6)):
             with patch('imdb_requester.ImdbRequester.get_movie_info', return_value=test_movie_data_6):
-                expected_result = {'The Godfather': 1980.2,
-                                   'The Shawshank Redemption': 1075.27,
-                                   'The Silence of the Lambs': 13.89}
+                expected_result = [
+                    ('The Godfather', 1980.2),
+                    ('The Shawshank Redemption', 1075.27),
+                    ('The Silence of the Lambs', 13.89)
+                ]
                 result = links_instance.top_cost_per_minute(3)
                 assert len(result) == 3
-                assert result == expected_result
+                assert list(result.items()) == expected_result
 
     def test_top_cost_per_minute_zero(self, links_instance, test_movie_data_6):
         """Тест при нулевом количестве позиций"""
