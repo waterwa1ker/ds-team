@@ -1,0 +1,16 @@
+{
+    "Comedy": 9,
+    "Romance": 6,
+    "Drama": 3,
+    "Fantasy": 3,
+    "Children": 3,
+    "Mystery": 2,
+    "Thriller": 2,
+    "Adventure": 2,
+    "Musical": 2,
+    "Crime": 2,
+    "Horror": 1,
+    "Action": 1,
+    "Animation": 1,
+    "Sci-Fi": 1
+}

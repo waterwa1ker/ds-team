@@ -7,7 +7,9 @@
     1.2. [Пример](#пример) \
     1.3. [Предложения по фиксу](#предложения-по-фиксу) \
     1.4. [P.S.](#ps)
-
+2. [Вопрос по movies.py](#вопрос-по-moviespy) \
+    2.1. [Описание](#описание-1) \
+    2.2. [В чем собственно вопрос](#в-чем-собственно-вопрос)
 ___
 
 ## Проблема в функции Links.longest() - несоответствие типов
@@ -60,3 +62,53 @@ FAILED links_test.py::TestLongest::test_longest_default - AttributeError: 'list'
 если вдруг думаешь, что у меня данные неверные, то скорее всего ты ошибаешься, т.к. я мокирую метод get_movie_info, а он возвращает словарь, так что все ок там
 
 ___
+
+## Вопрос по movies.py
+
+### Описание
+
+Функции
+
+```python
+dist_by_release()
+dist_by_genres()
+```
+
+тестил по одному разу, по файлу info/movies.csv.
+
+Функцию
+
+```python
+most_genres(n)
+```
+
+тестил чуть поболее, но тоже не особо.
+
+### В чем собственно вопрос
+
+```pytest-cov``` говорит мне, что покрытие 100%:
+
+```bash
+Name                                                                                  Stmts   Miss  Cover
+---------------------------------------------------------------------------------------------------------
+/Users/antonylo/Desktop/projects/ds-team/src/constants/body_constants.py                  3      0   100%
+/Users/antonylo/Desktop/projects/ds-team/src/data.py                                     21      0   100%
+/Users/antonylo/Desktop/projects/ds-team/src/exceptions/invalid_number_exception.py       3      0   100%
+/Users/antonylo/Desktop/projects/ds-team/src/imdb_requester.py                           55      6    89%
+/Users/antonylo/Desktop/projects/ds-team/src/links.py                                    52      1    98%
+/Users/antonylo/Desktop/projects/ds-team/src/movielens_analysis.py                        9      9     0%
+/Users/antonylo/Desktop/projects/ds-team/src/movies.py                                   39      0   100% <<<<<< вот тут
+/Users/antonylo/Desktop/projects/ds-team/src/ratings.py                                  61     61     0%
+/Users/antonylo/Desktop/projects/ds-team/src/tags.py                                     40     40     0%
+/Users/antonylo/Desktop/projects/ds-team/src/utils/converter.py                          21      0   100%
+/Users/antonylo/Desktop/projects/ds-team/src/utils/file_parser.py                        31      9    71%
+/Users/antonylo/Desktop/projects/ds-team/src/utils/utils.py                              44      3    93%
+links_test.py                                                                           385      4    99%
+movies_test.py                                                                           54      1    98%
+---------------------------------------------------------------------------------------------------------
+TOTAL                                                                                   818    134    84%
+```
+
+и мне с этим тяжело согласиться, так как я не тестил функции на невалидные данные.
+
+Вот собственно и вопрос. Нужно ли мне тестить функции на хуевых данных? Или у тебя просто такие данные на этапе конструктора нахуй посылаются?
